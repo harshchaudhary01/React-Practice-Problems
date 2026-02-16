@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import useSearch from "./hooks/useSearch";
+import SearchBar from "./components/SearchBar";
+import UserList from "./components/UserList";
+
+const usersData = [
+  { id: 1, name: "Laptop", price: 50000 },
+  { id: 2, name: "Mobile", price: 20000 },
+  { id: 3, name: "Tablet", price: 15000 },
+  { id: 4, name: "Keyboard", price: 1000 },
+  { id: 5, name: "Mouse", price: 500 },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { query, setQuery, filteredData } = useSearch(usersData, "name");
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+    <div style={{display: "flex", alignItems: "center", justifyContent: "center", height:"100vh"}}>
+      <div style={{ padding: "20px"  }}>
+      <h2>Product Search</h2>
+
+      <SearchBar
+        query={query}
+        setQuery={setQuery}
+        placeholder="Search product..."
+      />
+
+      <p>
+        Showing {filteredData.length} of {usersData.length} products
       </p>
-    </>
-  )
+
+      <UserList users={filteredData} />
+    </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
