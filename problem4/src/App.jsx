@@ -1,35 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useRef, useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [messages, setMessages] = useState([]);
+  const inputRef = useRef(null);
+  const focusCountRef = useRef(0);
+  const historyRef = useRef([]);
+  const [focusCount, setFocusCount] = useState(0);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+  const handleFocus = () => {
+    focusCountRef.current += 1;
+    setFocusCount(focusCountRef.current);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const value = inputRef.current.value.trim();
+    if (!value) return;
+    setMessages((prev) => [...prev, value]);
+    historyRef.current.push(value);
+    inputRef.current.value = "";
+  };
+
+  const focusInput = () => {
+    inputRef.current.focus();
+  };
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]); 
+  return ( 
+    <div style={{display:"flex", alignItems:"center", justifyContent: "center", height: "100vh"}}>
+      <div style={{ padding: "20px"}}>
+      <h2>Focus Tracker & Message History</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Type message..."
+          ref={inputRef}
+          onFocus={handleFocus}
+        />
+        <button type="submit">Submit</button>
+        <button type="button" onClick={focusInput}>
+          Focus Input
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      </form>
+
+      <p>Focus count: {focusCount}</p>
+
+      <div>
+        <strong>Messages:</strong>
+        <ul>
+          {messages.map((msg, index) => (
+            <li key={index}>- {msg}</li>
+          ))}
+        </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      <div>
+        <strong>History in Ref (no re-render):</strong>{" "}
+        {historyRef.current.join(", ")}
+      </div>
+    </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
